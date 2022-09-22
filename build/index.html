@@ -7,16 +7,17 @@
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 	</head>
 
-	<body style='margin : 0px; overflow: hidden;'>
+	<body>
 		<a-scene embedded arjs>
 			<a-assets>
 				<a-asset-item id="me-gltf" src="./me_dance.gltf"></a-asset-item>
 			</a-assets>
 			
-			<a-entity gltf-model="#me-gltf" position="-1 0.5 -3" animation-mixer="loop:repeat"></a-entity>
-			<a-entity light="type: ambient; intensity: 15"></a-entity>
-			<!-- <a-box color="#4CC3D9" position="2 0.5 -3"></a-box> -->
-			<a-camera></a-camera>
+			<a-entity gltf-model="#me-gltf" 
+						position="-1 0.5 -3" 
+						animation-mixer="loop:repeat"
+						shadow="cast: true; receive: false"></a-entity>
+			<a-entity light="type: ambient; intensity: 10" position="2 0 -3" ></a-entity>
 		</a-scene>
 	</body>
 
