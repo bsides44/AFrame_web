@@ -115,15 +115,33 @@
 		<script>
 		AFRAME.registerComponent("hide-on-hit-test-start", {
 			init: function() {
-			  this.el.sceneEl.addEventListener("ar-hit-test-start", function() {
-				this.el.object3D.visible = false;
-			  });
-			  this.el.sceneEl.addEventListener("exit-vr", function() {
-				this.el.object3D.visible = true;
-			  });
+				console.log("init hide on hit test start")
+
+				this.el.sceneEl.addEventListener("ar-hit-test-start", function(ev) {
+					console.log("hit test start - hide object", ev)
+					ev.target.object3D.visible = false;
+				});
+				this.el.sceneEl.addEventListener("exit-vr", function() {
+					ev.target.object3D.visible = true;
+					console.log("exit vr - show object")
+
+				});
+
+				this.el.sceneEl.addEventListener('ar-hit-test-achieved', (ev) => {
+					console.log("hit test achieved", ev)
+				});
+				this.el.sceneEl.addEventListener('ar-hit-test-select', (ev) => {
+					console.log("hit test select", ev)
+					ev.target.object3D.visible = true;
+				});
 			}
 		  });
 		  </script>
+		  <style>
+			.a-enter-ar {
+				position: fixed !important;
+			}
+		  </style>
 	</head>
 
 	<body>
@@ -135,7 +153,6 @@
 				ar-hit-test="target:#me-gltf;"
 				reflection="directionalLight:#dirlight;"
 				shadow="type: pcfsoft"
-				ar-cursor
 				raycaster="objects: #me-gltf"
 				> 
 			<a-assets>
@@ -146,7 +163,8 @@
 			<!-- black screen without position="-1 0.5 -3" -->
 			<!--StSpanho: <a-entity id="model-container" position="-1 0 -3" scale="0.5 0.5 0.5"> -->
 				<a-entity hide-on-hit-test-start
-							position="-1 0.5 -3" rotation="0 55 0"
+
+							rotation="0 55 0"
 							gltf-model="#me-gltf"
 							animation-mixer="loop:repeat"
 							shadow="cast: true; receive: false"></a-entity>
