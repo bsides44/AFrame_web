@@ -2,9 +2,13 @@
 
 	<head>
 		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-		<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+		<!-- StSpanHo <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script> -->
+		<script src="https://raw.githack.com/AR-js-org/AR.js/3.4.0/aframe/build/aframe-ar.js"></script>
 		<!-- animation -->
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<!-- MisterNox -->
+		<script src="ar-cursor.js"></script>
+		<!-- StSpanHo https://github.com/stspanho/aframe-hit-test
 		<script>
 		AFRAME.registerComponent('ar-shadows', {
 			// Swap an object's material to a transparent shadows-only material while
@@ -106,32 +110,55 @@
 					}
 				}
 			}
-		});</script>
+		});</script> -->
+		 <!-- MisterNox  -->
+		<script>
+		AFRAME.registerComponent("hide-on-hit-test-start", {
+			init: function() {
+			  this.el.sceneEl.addEventListener("ar-hit-test-start", function() {
+				this.el.object3D.visible = false;
+			  });
+			  this.el.sceneEl.addEventListener("exit-vr", function() {
+				this.el.object3D.visible = true;
+			  });
+			}
+		  });
+		  </script>
 	</head>
 
 	<body>
-		<!-- <a-scene embedded arjs webxr="optionalFeatures:  hit-test;" ar-hit-test="target:#me-gltf;"> -->
-		<a-scene webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay,unbounded;">
+		<!-- Me: <a-scene embedded arjs webxr="requiredFeatures:  hit-test;" ar-hit-test="target:#me-gltf;"> -->
+		<!-- StSpanho: <a-scene webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay,unbounded;"> -->
+			<!-- MisterNox https://stackoverflow.com/questions/72544917/marker-detection-ar-js-in-a-frame-project -->
+			<a-scene arjs
+				webxr="overlayElement:#dom-overlay; requiredFeatures:hit-test;" 
+				ar-hit-test="target:#me-gltf;"
+				reflection="directionalLight:#dirlight;"
+				shadow="type: pcfsoft"
+				ar-cursor
+				raycaster="objects: #me-gltf"
+				> 
 			<a-assets>
 				<a-asset-item id="me-gltf" src="./Maddy_20k.gltf" response-type="arraybuffer"></a-asset-item>
 				<a-asset-item id="reticle" src="./reticle.gltf" response-type="arraybuffer"></a-asset-item>
 			</a-assets>
 
 			<!-- black screen without position="-1 0.5 -3" -->
-			<a-entity id="model-container" position="-1 0 -3" scale="0.5 0.5 0.5">
-				<a-entity position="0 2.15 0" rotation="0 55 0"
+			<!--StSpanho: <a-entity id="model-container" position="-1 0 -3" scale="0.5 0.5 0.5"> -->
+				<a-entity hide-on-hit-test-start
+							position="-1 0.5 -3" rotation="0 55 0"
 							gltf-model="#me-gltf"
 							animation-mixer="loop:repeat"
 							shadow="cast: true; receive: false"></a-entity>
 		
 				<!-- This shadow-receiving plane is only visible in AR mode.-->
-				<a-plane height="30" width="30" rotation="-90 0 0"
+				<!-- StSpanho: <a-plane height="30" width="30" rotation="-90 0 0"
 							shadow="receive: true"
 							ar-shadows="opacity: 0.2"
-							visible="false"></a-plane>
+							visible="false"></a-plane> -->
 		
-			</a-entity>
-			<a-entity gltf-model="#reticle" scale="0.8 0.8 0.8" ar-hit-test></a-entity>
+			<!-- </a-entity> -->
+			<!-- StSpanho: <a-entity gltf-model="#reticle" scale="0.8 0.8 0.8" ar-hit-test></a-entity> -->
 			<a-entity light="type: hemisphere; intensity: 10"></a-entity>
 			<a-light type="directional"
 				light="intensity: 10;
@@ -142,11 +169,11 @@
 						shadowCameraRight: 5;
 						shadowCameraBottom: -5;
 						shadowCameraTop: 5;"
-				id="light"
-				target="dino"
+				id="dirlight"
+				target="me-gltf"
 				position="-2 4 2">
    			</a-light>
-			<a-camera position="0 1.2 0"></a-camera>
+			<a-camera></a-camera>
 		</a-scene>
 	</body>
 
