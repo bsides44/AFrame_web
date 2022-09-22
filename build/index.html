@@ -5,18 +5,131 @@
 		<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 		<!-- animation -->
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script>
+		AFRAME.registerComponent('ar-shadows', {
+			// Swap an object's material to a transparent shadows-only material while
+			// in AR mode. Intended for use with a ground plane. The object is also
+			// set visible while in AR mode, this is useful if it's hidden in other
+			// modes due to them using a 3D environment.
+			schema: {
+				opacity: {default: 0.3}
+			},
+			init: function () {
+				this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+					this.wasVisible = this.el.getAttribute('visible');
+					if (this.el.sceneEl.is('ar-mode')) {
+						this.savedMaterial = this.el.object3D.children[0].material;
+						this.el.object3D.children[0].material = new THREE.ShadowMaterial();
+						this.el.object3D.children[0].material.opacity = this.data.opacity;
+						this.el.setAttribute('visible', true);
+					}
+				});
+				this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+					if (this.savedMaterial) {
+						this.el.object3D.children[0].material = this.savedMaterial;
+						this.savedMaterial = null;
+					}
+					if (!this.wasVisible) this.el.setAttribute('visible', false);
+				});
+			}
+		});
+
+		AFRAME.registerComponent('ar-hit-test', {
+			init: function () {
+				this.xrHitTestSource = null;
+				this.viewerSpace = null;
+				this.refSpace = null;
+
+				this.el.sceneEl.renderer.xr.addEventListener('sessionend', (ev) => {
+					this.viewerSpace = null;
+					this.refSpace = null;
+					this.xrHitTestSource = null;
+				});
+				this.el.sceneEl.renderer.xr.addEventListener('sessionstart', (ev) => {
+					let session = this.el.sceneEl.renderer.xr.getSession();
+
+					let element = this.el;
+					session.addEventListener('select', function () {
+						let position = element.getAttribute('position');
+
+						document.getElementById('model-container').setAttribute('position', position);
+						document.getElementById('light').setAttribute('position', {
+							x: (position.x - 2),
+							y: (position.y + 4),
+							z: (position.z + 2)
+						});
+					});
+
+					session.requestReferenceSpace('viewer').then((space) => {
+						this.viewerSpace = space;
+						session.requestHitTestSource({space: this.viewerSpace})
+								.then((hitTestSource) => {
+									this.xrHitTestSource = hitTestSource;
+								});
+					});
+
+					session.requestReferenceSpace('local-floor').then((space) => {
+						this.refSpace = space;
+					});
+				});
+			},
+			tick: function () {
+				if (this.el.sceneEl.is('ar-mode')) {
+					if (!this.viewerSpace) return;
+
+					let frame = this.el.sceneEl.frame;
+					let xrViewerPose = frame.getViewerPose(this.refSpace);
+
+					if (this.xrHitTestSource && xrViewerPose) {
+						let hitTestResults = frame.getHitTestResults(this.xrHitTestSource);
+						if (hitTestResults.length > 0) {
+							let pose = hitTestResults[0].getPose(this.refSpace);
+
+							let inputMat = new THREE.Matrix4();
+							inputMat.fromArray(pose.transform.matrix);
+
+							let position = new THREE.Vector3();
+							position.setFromMatrixPosition(inputMat);
+							this.el.setAttribute('position', position);
+						}
+					}
+				}
+			}
+		});</script>
 	</head>
 
 	<body>
-		<a-scene embedded arjs webxr="optionalFeatures:  hit-test;" ar-hit-test="target:#me-gltf;">
+		<a-scene webxr="requiredFeatures: hit-test,local-floor;">
 			<a-assets>
 				<a-asset-item id="me-gltf" src="./Maddy_20k.gltf"></a-asset-item>
 			</a-assets>
-			 <!-- black screen without position="-1 0.5 -3" -->
-			<a-entity gltf-model="#me-gltf" 
-						animation-mixer="loop:repeat"
-						shadow="cast: true; receive: false"></a-entity>
-			<a-entity light="type: ambient; intensity: 10" position="2 0 -3" ></a-entity>
+
+			<a-entity id="model-container" position="-1 0 -3" scale="0.5 0.5 0.5">
+				<a-entity position="0 2.15 0" rotation="0 55 0"
+							gltf-model="#me-gltf"
+							animation-mixer="loop:repeat"
+							shadow="cast: true; receive: false"></a-entity>
+		
+				<!-- This shadow-receiving plane is only visible in AR mode.-->
+				<a-plane height="30" width="30" rotation="-90 0 0"
+							shadow="receive: true"
+							ar-shadows="opacity: 0.2"
+							visible="false"></a-plane>
+		
+			</a-entity>
+			<a-light type="directional"
+				light="intensity: 10;
+					castShadow: true;
+						shadowMapHeight: 1024;
+						shadowMapWidth: 1024;
+						shadowCameraLeft: -7;
+						shadowCameraRight: 5;
+						shadowCameraBottom: -5;
+						shadowCameraTop: 5;"
+				id="light"
+				target="dino"
+				position="-2 4 2">
+   			</a-light>
 			<a-camera></a-camera>
 		</a-scene>
 	</body>
