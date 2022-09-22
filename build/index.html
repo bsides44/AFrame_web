@@ -2,7 +2,7 @@
 
 	<head>
 		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-		<!-- <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script> -->
+		<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 		<!-- animation -->
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 		<script>
@@ -93,6 +93,7 @@
 					if (this.xrHitTestSource && xrViewerPose) {
 						let hitTestResults = frame.getHitTestResults(this.xrHitTestSource);
 						if (hitTestResults.length > 0) {
+							console.log('hit test results', hitTestResults)
 							let pose = hitTestResults[0].getPose(this.refSpace);
 
 							let inputMat = new THREE.Matrix4();
@@ -110,7 +111,7 @@
 
 	<body>
 		<!-- <a-scene embedded arjs webxr="optionalFeatures:  hit-test;" ar-hit-test="target:#me-gltf;"> -->
-		<a-scene webxr="requiredFeatures: hit-test,local-floor;">
+		<a-scene webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay,unbounded;">
 			<a-assets>
 				<a-asset-item id="me-gltf" src="./Maddy_20k.gltf" response-type="arraybuffer"></a-asset-item>
 				<a-asset-item id="reticle" src="./reticle.gltf" response-type="arraybuffer"></a-asset-item>
@@ -130,6 +131,7 @@
 							visible="false"></a-plane>
 		
 			</a-entity>
+			<a-entity gltf-model="#reticle" scale="0.8 0.8 0.8" ar-hit-test></a-entity>
 			<a-entity light="type: hemisphere; intensity: 10"></a-entity>
 			<a-light type="directional"
 				light="intensity: 10;
