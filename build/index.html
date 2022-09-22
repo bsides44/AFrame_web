@@ -131,7 +131,7 @@
 		<!-- StSpanho: <a-scene webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay,unbounded;"> -->
 			<!-- MisterNox https://stackoverflow.com/questions/72544917/marker-detection-ar-js-in-a-frame-project -->
 			<a-scene arjs
-				webxr="overlayElement:#dom-overlay; requiredFeatures:hit-test;" 
+				webxr="overlayElement:#dom-overlay; optionalFeatures:hit-test;" 
 				ar-hit-test="target:#me-gltf;"
 				reflection="directionalLight:#dirlight;"
 				shadow="type: pcfsoft"
