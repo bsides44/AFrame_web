@@ -7,20 +7,6 @@
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 		<!-- NB: WebXR features like hit testing don't currently work on iOS -->
 		<script>
-		AFRAME.registerComponent('hide-in-ar-mode', {
-			init: function () {
-				// enter-vr is for both xr options
-				this.el.sceneEl.addEventListener('enter-vr', (ev) => {
-					if (this.el.sceneEl.is('ar-mode')) {
-						this.el.setAttribute('visible', false);
-					}
-				});
-					this.el.sceneEl.addEventListener('exit-vr', (ev) => {
-					this.el.setAttribute('visible', true);
-				});
-			}
-			})
-
 		AFRAME.registerComponent("hide-on-hit-test-start", {
 			init: function() {
 				
@@ -36,6 +22,33 @@
 				});
 			}
 		  });
+
+		  AFRAME.registerComponent('ar-shadows', {
+			// StSpanHo https://github.com/stspanho/aframe-hit-test
+			// Swap ground plane's material to a transparent shadows-only material in AR mode. 
+			schema: {
+				opacity: {default: 0.3}
+			},
+			init: function () {
+				this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+					this.wasVisible = this.el.getAttribute('visible');
+					if (this.el.sceneEl.is('ar-mode')) {
+						this.savedMaterial = this.el.object3D.children[0].material;
+						this.el.object3D.children[0].material = new THREE.ShadowMaterial();
+						this.el.object3D.children[0].material.opacity = this.data.opacity;
+						this.el.setAttribute('visible', true);
+					}
+				});
+				this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+					if (this.savedMaterial) {
+						this.el.object3D.children[0].material = this.savedMaterial;
+						this.savedMaterial = null;
+					}
+					if (!this.wasVisible) this.el.setAttribute('visible', false);
+				});
+			}
+		});
+
 		  </script>
 		  <style>
 			.a-enter-ar{
@@ -54,33 +67,37 @@
 				raycaster="objects: #me-gltf"
 				> 
 			<a-assets>
-				<a-asset-item id="me-gltf" src="./Maddy_20k.gltf" response-type="arraybuffer"></a-asset-item>
-				<a-asset-item id="reticle" src="./reticle.gltf" response-type="arraybuffer"></a-asset-item>
+				<a-asset-item id="me-gltf" src="./me_dance.gltf" response-type="arraybuffer"></a-asset-item>
 			</a-assets>
 
-			<!-- black screen without position -->
-				<a-entity hide-on-hit-test-start
-							position="-1 0.5 -3" 
-							rotation="0 55 0"
-							gltf-model="#me-gltf"
-							animation-mixer="loop:repeat"
-							shadow="cast: true; receive: false"></a-entity>
-		
+			<a-entity hide-on-hit-test-start
+				gltf-model="#me-gltf"	
+				animation-mixer="loop:repeat"
+				position="-1 0 -3" 
+				rotation="0 55 0"
+				shadow="cast: true; receive: false"></a-entity>
+
+			<!-- AR shadow receiving plane  -->
+			<a-plane height="30" width="30" rotation="-90 0 0"
+				shadow="receive: true"
+				ar-shadows="opacity: 0.2"
+				visible="false"></a-plane>
+	
 			<a-entity light="type: hemisphere; intensity: 10"></a-entity>
 			<a-light type="directional"
 				light="intensity: 10;
 					castShadow: true;
-						shadowMapHeight: 1024;
-						shadowMapWidth: 1024;
-						shadowCameraLeft: -7;
-						shadowCameraRight: 5;
-						shadowCameraBottom: -5;
-						shadowCameraTop: 5;"
+					shadowMapHeight: 1024;
+					shadowMapWidth: 1024;
+					shadowCameraLeft: -7;
+					shadowCameraRight: 5;
+					shadowCameraBottom: -5;
+					shadowCameraTop: 5;"
 				id="dirlight"
 				target="me-gltf"
 				position="-2 4 2">
    			</a-light>
-			   <a-camera position="0 1.2 0"></a-camera>
+			<a-camera position="0 1.2 0"></a-camera>
 		</a-scene>
 	</body>
 
