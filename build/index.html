@@ -54,16 +54,17 @@
 				shadow="type: pcfsoft"
 				> 
 			<a-assets>
-				<a-asset-item id="me-gltf" src="./me_dance.gltf" response-type="arraybuffer"></a-asset-item>
+				<a-asset-item id="me-gltf" src="./me_dance_20k.gltf" response-type="arraybuffer"></a-asset-item>
 			</a-assets>
 
-			<!-- <a-entity hide-on-hit-test-start
+			<a-entity hide-on-hit-test-start
 				gltf-model="#me-gltf"	
 				animation-mixer="loop:repeat"
 				position="-1 0 -3" 
 				rotation="0 55 0"
-				shadow="cast: true; receive: false"></a-entity> -->
-				<a-box color="blue"></a-box>
+				shadow="cast: true; receive: false"
+				scale="100 100 100"></a-entity>
+				<!-- <a-box color="blue"></a-box> -->
 
 			<!-- AR shadow receiving plane  -->
 			<a-plane height="30" width="30" rotation="-90 0 0"
