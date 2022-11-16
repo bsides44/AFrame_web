@@ -57,7 +57,8 @@
 		  <style>
 			.a-enter-ar{
 				position: fixed !important;
-				right: 80px !important;
+				right: 20px !important;
+   				bottom: 17px !important;
 			}
 			.a-enter-vr{
 				visibility: hidden !important;
@@ -114,6 +115,18 @@
 					width: 150px;
 					font-size: 14px;
 				}
+			}
+
+			@media screen and (max-width: 300px) {
+				#webButton {
+					bottom: 50px;
+					width: 77%;
+				}
+				.a-enter-ar{
+					right: auto !important;
+   					bottom: 5px !important;
+					left: 30px !important;
+			}
 			}
 		</style>
 	</head>
