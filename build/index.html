@@ -38,12 +38,80 @@
 		});
 
 		  </script>
+		  <script>
+			function noAttention(){
+				setTimeout(() => {
+				document.getElementById('webButton').setAttribute('class', 'noAttn');
+				attention()
+			}, 1000);
+		}
+			function attention(){
+				setTimeout(() => {
+				document.getElementById('webButton').setAttribute('class', 'attn');
+				noAttention()
+			}, 6000);
+		}
+			attention()
+		
+		  </script>
 		  <style>
 			.a-enter-ar{
 				position: fixed !important;
 				right: 80px !important;
 			}
-		  </style>
+			#webButton {
+				position: absolute;
+				bottom: 20px;
+				left: 30px;
+				width: 200px;
+				border: 1px solid black;
+				font-family: system-ui, sans-serif;
+				font-size: 18px;
+				line-height: 170%;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				letter-spacing: 1.25px;
+				transition: all 200ms linear;
+			}
+			.noAttn {
+				background: aquamarine;
+				border-color: black;
+				border-width: 1px;
+				box-shadow: none;
+				font-weight: 100;
+				transition: all 200ms linear;
+			}
+			#webButton:hover {
+				background: #74edc5;
+				border-color: rgba(0, 0, 0, 0.05) !important;  
+				border-width: 1px 0px 0px 1px !important;
+				box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2) !important;
+				font-weight: 300;
+				transition: all 200ms linear;
+				cursor: pointer;
+			}
+			.attn {
+				background: #74edc5;
+				border-color: rgba(0, 0, 0, 0.05) !important;  
+				border-width: 1px 0px 0px 1px !important;
+				box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2) !important;
+				font-weight: 200;
+				transition: all 200ms linear;
+				cursor: pointer;
+			}
+			a {
+				text-decoration: none;
+				color: black;}
+
+			@media screen and (max-width: 400px) {
+				#webButton {
+					width: 150px;
+					font-size: 14px;
+				}
+			}
+		</style>
 	</head>
 
 	<body>
@@ -53,41 +121,42 @@
 				reflection="directionalLight:#dirlight;"
 				shadow="type: pcfsoft"
 				> 
-			<a-assets>
-				<a-asset-item id="me-gltf" src="./me_dance_20k.gltf" response-type="arraybuffer"></a-asset-item>
-			</a-assets>
+				<a-assets>
+					<a-asset-item id="me-gltf" src="./me_dance_20k.gltf" response-type="arraybuffer"></a-asset-item>
+				</a-assets>
 
-			<a-entity hide-on-hit-test-start
-				gltf-model="#me-gltf"	
-				animation-mixer="loop:repeat"
-				position="-1 0 -3" 
-				rotation="0 55 0"
-				shadow="cast: true; receive: false"
-				scale="100 100 100"></a-entity>
-				<!-- <a-box color="blue"></a-box> -->
+				<a-entity hide-on-hit-test-start
+					gltf-model="#me-gltf"	
+					animation-mixer="loop:repeat"
+					position="-1 0 -3" 
+					rotation="0 55 0"
+					shadow="cast: true; receive: false"
+					scale="100 100 100"></a-entity>
+					<!-- <a-box color="blue"></a-box> -->
 
-			<!-- AR shadow receiving plane  -->
-			<a-plane height="30" width="30" rotation="-90 0 0"
-				shadow="receive: true"
-				ar-shadows="opacity: 0.2"
-				visible="false"></a-plane>
-	
-			<a-entity light="type: hemisphere; intensity: 10"></a-entity>
-			<a-light type="directional"
-				light="intensity: 10;
-					castShadow: true;
-					shadowMapHeight: 1024;
-					shadowMapWidth: 1024;
-					shadowCameraLeft: -7;
-					shadowCameraRight: 5;
-					shadowCameraBottom: -5;
-					shadowCameraTop: 5;"
-				id="dirlight"
-				target="me-gltf"
-				position="-2 4 2">
-   			</a-light>
-			<a-marker-camera preset='kanji'></a-marker-camera>
-		</a-scene>
+				<!-- AR shadow receiving plane  -->
+				<a-plane height="30" width="30" rotation="-90 0 0"
+					shadow="receive: true"
+					ar-shadows="opacity: 0.2"
+					visible="false"></a-plane>
+		
+				<a-entity light="type: hemisphere; intensity: 10"></a-entity>
+				<a-light type="directional"
+					light="intensity: 10;
+						castShadow: true;
+						shadowMapHeight: 1024;
+						shadowMapWidth: 1024;
+						shadowCameraLeft: -7;
+						shadowCameraRight: 5;
+						shadowCameraBottom: -5;
+						shadowCameraTop: 5;"
+					id="dirlight"
+					target="me-gltf"
+					position="-2 4 2">
+				</a-light>
+				<a-marker-camera preset='kanji'></a-marker-camera>
+			</a-scene>
+		<button id="webButton" class="noAttn"><a href='https://bsides44.github.io' target='_blank' rel='noopener noreferrer'>Go to website</a></button>
 	</body>
 
 </html>
