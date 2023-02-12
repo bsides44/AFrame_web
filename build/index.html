@@ -23,18 +23,18 @@
 			}
 		  });
 
-		  AFRAME.registerComponent('ar-shadows', {
-			// StSpanHo https://github.com/stspanho/aframe-hit-test
+		  AFRAME.registerComponent('shadow-plane', {
+			// Developed from StSpanHo https://github.com/stspanho/aframe-hit-test
 			// Swap ground plane's material to a transparent shadows-only material in AR mode. 
 			schema: {
 				opacity: {default: 0.3}
 			},
 			init: function () {
-						this.savedMaterial = this.el.object3D.children[0].material;
-						this.el.object3D.children[0].material = new THREE.ShadowMaterial();
-						this.el.object3D.children[0].material.opacity = this.data.opacity;
-						this.el.setAttribute('visible', true);
-					}
+				this.savedMaterial = this.el.object3D.children[0].material;
+				this.el.object3D.children[0].material = new THREE.ShadowMaterial();
+				this.el.object3D.children[0].material.opacity = this.data.opacity;
+				this.el.setAttribute('visible', true);
+			}
 		});
 
 		  </script>
@@ -60,7 +60,7 @@
 				right: 20px !important;
    				bottom: 17px !important;
 			}
-			.a-enter-vr{
+			.a-enter-vr, .a-enter-ar {
 				visibility: hidden !important;
 			}
 			#webButton {
@@ -68,7 +68,9 @@
 				bottom: 20px;
 				left: 30px;
 				width: 200px;
-				border: 1px solid black;
+				border: none;
+				border-radius: 20px;
+				padding: 5px;
 				font-family: system-ui, sans-serif;
 				font-size: 18px;
 				line-height: 170%;
@@ -109,7 +111,23 @@
 				text-decoration: none;
 				color: black;
 			}
-
+			#gitButton {
+				position: absolute;
+				bottom: 7px;
+				right: 20px;
+				width: 75px;
+				border: none;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				letter-spacing: 1.25px;
+				transition: all 200ms linear;
+			}
+			#gitButton:hover {
+				width:78px;
+				transition: all 200ms linear;
+			}
 			@media screen and (max-width: 350px) {
 				#webButton {
 					width: 150px;
@@ -148,12 +166,11 @@
 					rotation="0 55 0"
 					shadow="cast: true; receive: false"
 					scale="0.5 0.5 0.5"></a-entity>
-					<!-- <a-box color="blue"></a-box> -->
 
 				<!-- AR shadow receiving plane  -->
 				<a-plane height="30" width="30" rotation="-90 0 0"
 					shadow="receive: true"
-					ar-shadows="opacity: 0.2"
+					shadow-plane="opacity: 0.2"
 					visible="false"></a-plane>
 		
 				<a-entity light="type: hemisphere; intensity: 10"></a-entity>
@@ -170,9 +187,11 @@
 					target="me-gltf"
 					position="-2 4 2">
 				</a-light>
-				<a-marker-camera preset='kanji'></a-marker-camera>
+				<!-- <a-marker-camera preset='kanji'></a-marker-camera> -->
 			</a-scene>
 		<button id="webButton" class="noAttn"><a href='https://maddyking44.com' target='_blank' rel='noopener noreferrer'>Come Home</a></button>
+		<button><a href='https://github.com/bsides44/AFrame_web' target='_blank' rel='noopener noreferrer'><img id="gitButton" src="./github.png"></a></button>
+
 	</body>
 
 </html>
